@@ -1,0 +1,22 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: nginx-scaledobject
+  namespace: keda
+  labels:
+    deploymentName: hello-world-deployment
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    name: hello-world-deployment
+  pollingInterval: 5
+  cooldownPeriod: 10
+  minReplicaCount: 2
+  maxReplicaCount: 10
+  triggers:
+  - type: http
+    metadata:
+      metricName: "nginx_requests_per_second"
+      targetAverageValue: "100"
+      http:
+        url: "http://hello-world-service.keda.svc.cluster.local"
